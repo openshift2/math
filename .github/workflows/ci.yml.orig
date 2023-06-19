@@ -18,18 +18,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  runner-selection:
-    runs-on: ubuntu-latest
-    outputs:
-      labelmatrix: ${{ steps.aws_hosted_runners.outputs.labelmatrix }}
-    steps:
-      - name: AWS Hosted Runners
-        id: aws_hosted_runners
-        uses: samd2/aws-hosted-runners@v0.1.14
-
   ubuntu-jammy:
-    needs: [runner-selection]
-    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['ubuntu-22.04'] }}
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -88,8 +78,7 @@ jobs:
         run: ../../../b2 toolset=$TOOLSET ${{ matrix.suite }} define=CI_SUPPRESS_KNOWN_ISSUES define=SLOW_COMPILER
         working-directory: ../boost-root/libs/math/test
   ubuntu-focal-no-eh:
-    needs: [runner-selection]
-    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['ubuntu-20.04'] }}
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -147,8 +136,7 @@ jobs:
         run: ../../../b2 toolset=$TOOLSET no_eh_tests exception-handling=off rtti=off define=CI_SUPPRESS_KNOWN_ISSUES define=SLOW_COMPILER
         working-directory: ../boost-root/libs/math/test
   macos:
-    needs: [runner-selection]
-    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['macos-latest'] }}
+    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
@@ -186,8 +174,7 @@ jobs:
         run: ../../../b2 toolset=${{ matrix.toolset }} cxxstd=${{ matrix.standard }} ${{ matrix.suite }} define=CI_SUPPRESS_KNOWN_ISSUES define=SLOW_COMPILER
         working-directory: ../boost-root/libs/math/test
   windows:
-    needs: [runner-selection]
-    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['windows-2019'] }}
+    runs-on: windows-2019
     defaults:
       run:
         shell: cmd
@@ -230,8 +217,7 @@ jobs:
         run: ..\..\..\b2 --hash %ARGS% define=CI_SUPPRESS_KNOWN_ISSUES debug-symbols=off ${{ matrix.suite }}
         working-directory: ../boost-root/libs/math/test
   windows_gcc:
-    needs: [runner-selection]
-    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['windows-2019'] }}
+    runs-on: windows-2019
     defaults:
       run:
         shell: cmd
@@ -274,8 +260,7 @@ jobs:
         run: ..\..\..\b2 --hash %ARGS% define=CI_SUPPRESS_KNOWN_ISSUES ${{ matrix.suite }}
         working-directory: ../boost-root/libs/math/test
   MSVC2022:
-    needs: [runner-selection]
-    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['windows-2022'] }}
+    runs-on: windows-2022
     defaults:
       run:
         shell: cmd
@@ -317,8 +302,7 @@ jobs:
         run: ..\..\..\b2 --hash %ARGS% define=CI_SUPPRESS_KNOWN_ISSUES ${{ matrix.suite }}
         working-directory: ../boost-root/libs/math/test
   cygwin:
-    needs: [runner-selection]
-    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['windows-latest'] }}
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
@@ -356,8 +340,7 @@ jobs:
       - name: Test
         run: C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE")/../boost-root/libs/math/test && ../../../b2 toolset=$TOOLSET ${{ matrix.suite }} define=CI_SUPPRESS_KNOWN_ISSUES define=SLOW_COMPILER'
   standalone-compile-tests-gcc:
-    needs: [runner-selection]
-    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['ubuntu-20.04'] }}
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -397,8 +380,7 @@ jobs:
         run: make -j$((`nproc`+1))
         working-directory: ../boost-root/libs/math
   standalone-compile-tests-clang:
-    needs: [runner-selection]
-    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['ubuntu-20.04'] }}
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -438,8 +420,7 @@ jobs:
         run: make -j$((`nproc`+1))
         working-directory: ../boost-root/libs/math
   standalone-gcc:
-    needs: [runner-selection]
-    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)['ubuntu-20.04'] }}
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
